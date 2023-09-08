@@ -1,0 +1,74 @@
+"use strict";
+
+/** Routes for authentication */
+
+const jsonschema = require("jsonschema");
+
+const User = require("../models/user");
+const express = require("express");
+const router = new express.Router();
+const { createToken } = require("../helpers/tokens");
+const { BadRequestError } = require("../expressError");
+const userAuthSchema = require("../schemas/userAuth.json");
+const userNewSchema = require("../schemas/userNew.json");
+const userRegisterSchema = require("../schemas/userRegister.json");
+
+/** POST /auth/token: { username, password } => { token }
+ *
+ * Returns JWT token which will be used to authenticate further requests.
+ *
+ * Authorization Required: None.
+ */
+
+router.post("/token", async function (req, res, next) {
+  try {
+    const validator = jsonschema.validate(req.body, userAuthSchema);
+    if (!validator.valid) {
+      const errs = validator.errors.map((e) => e.stack);
+      throw new BadRequestError(errs);
+    }
+
+    const { username, password } = req.body;
+    const user = await User.authenticate(username, password);
+    const token = createToken(user);
+    return res.json({ token });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+/** GET / => { users: [ {username, firstName, lastName }, ...] }
+ *
+ * Returns list of all users
+ * NEED ALL USERS FUNCTION
+ */
+
+router.get("/:username", async function (req, res, next) {
+  try {
+    const user = await User.get(req.params.username);
+    return res.json({ user });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+router.post("/register", async function (req, res, next) {
+  console.log("registering a user in auth.js");
+
+  try {
+    const writeObj = { ...req.body };
+    const validator = jsonschema.validate(writeObj, userRegisterSchema);
+    if (validator.errors.length != 0) {
+      const errs = validator.errors.map((e) => e.stack);
+      throw new BadRequestError(errs);
+    }
+
+    const newUser = await User.register(writeObj);
+    const token = createToken(newUser);
+    return res.status(201).json({ token });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+module.exports = router;
