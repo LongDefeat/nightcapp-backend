@@ -17,8 +17,13 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan("tiny"));
 
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+});
+
 // Use the routes AFTER the middlewares
-app.use('/cocktaildb', cocktailDbRoutes);
+app.use('/', cocktailDbRoutes);
+
 // app.use('/auth', authRoutes);  
 
 /** Handle 404 errors -- this matches everything */
