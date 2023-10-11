@@ -107,23 +107,23 @@ router.get("/list/alcohol", async (req, res, next) => {
   }
 });
 
-router.get("/all_filters", async (req, res, next) => {
-  try {
-    const [categories, glasses, ingredients] = await Promise.all([
-        axios.get("https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list"),
-        axios.get("https://www.thecocktaildb.com/api/json/v1/1/list.php?g=list"),
-        axios.get("https://www.thecocktaildb.com/api/json/v1/1/list.php?i=list"),
-    ]);
+// router.get("/all_filters", async (req, res, next) => {
+//   try {
+//     const [categories, glasses, ingredients] = await Promise.all([
+//         axios.get("https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list"),
+//         axios.get("https://www.thecocktaildb.com/api/json/v1/1/list.php?g=list"),
+//         axios.get("https://www.thecocktaildb.com/api/json/v1/1/list.php?i=list"),
+//     ]);
     
-    return res.json({
-        categories: categories.data.drinks,
-        glasses: glasses.data.drinks,
-        ingredients: ingredients.data.drinks,
-    });
-  } catch (err) {
-    return next(err);
-  }
-});
+//     return res.json({
+//         categories: categories.data.drinks,
+//         glasses: glasses.data.drinks,
+//         ingredients: ingredients.data.drinks,
+//     });
+//   } catch (err) {
+//     return next(err);
+//   }
+// });
 
 router.get("/cocktails", async (req, res, next) => {
   const { category } = req.query;
