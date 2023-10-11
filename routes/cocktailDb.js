@@ -70,6 +70,7 @@ router.get("/list/categories", async (req, res, next) => {
   try {
     const response = await axios.get("https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list");
     const categories = response.data.drinks;
+    console.log(categories);
     return res.json({ categories });
   } catch (err) {
     return next(new NotFoundError("Categories not found."));
@@ -108,18 +109,16 @@ router.get("/list/alcohol", async (req, res, next) => {
 
 router.get("/all_filters", async (req, res, next) => {
   try {
-    const [categories, glasses, ingredients, alcohol] = await Promise.all([
+    const [categories, glasses, ingredients] = await Promise.all([
         axios.get("https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list"),
         axios.get("https://www.thecocktaildb.com/api/json/v1/1/list.php?g=list"),
         axios.get("https://www.thecocktaildb.com/api/json/v1/1/list.php?i=list"),
-        axios.get("https://www.thecocktaildb.com/api/json/v1/1/list.php?a=list")
     ]);
     
     return res.json({
         categories: categories.data.drinks,
         glasses: glasses.data.drinks,
         ingredients: ingredients.data.drinks,
-        alcohol: alcohol.data.drinks
     });
   } catch (err) {
     return next(err);
