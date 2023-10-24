@@ -11,9 +11,9 @@ const BASE_URL = "https://www.thecocktaildb.com/api/json/v1/1/search.php?s=";
 router.get("/search", async (req, res, next) => {
   const { recipe } = req.query;
 
-  // if (!recipe) {
-  //   return next(new BadRequestError("You must provide a recipe name to search."));
-  // }
+  if (!recipe) {
+    return next(new BadRequestError("You must provide a recipe name to search."));
+  }
 
   try {
     const response = await axios.get(`https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${recipe}`);
